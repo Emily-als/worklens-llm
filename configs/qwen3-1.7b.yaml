@@ -39,4 +39,4 @@ run:
 #   sweep: {lr: [1.0e-4, 2.0e-4, 5.0e-4]}      (with scale: tune)
 #   sweep: {condition: [C1, C2, C3, C4, C5]}
 #   sweep: {seed: [43, 44]}
-sweep: {}
+sweep: {mode: [zero_shot, few_shot, finetune], condition: [C1, C2, C3]}
