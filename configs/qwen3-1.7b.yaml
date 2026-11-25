@@ -15,12 +15,13 @@ lora:
 train:
   lr: 2.0e-4                 # write floats with a dot and signed exponent (2.0e-4), YAML reads 2e-4 as text
   epochs: 1
-  batch_size: 8
-  grad_accum: 2              # effective batch = batch_size * grad_accum = 16
+  # A100 settings. On a T4 use batch_size 8, grad_accum 2, gradient_checkpointing true (same effective batch).
+  batch_size: 16
+  grad_accum: 1              # effective batch = batch_size * grad_accum = 16
   max_length: 512            # tokens; long reviews are clipped to max_length - 128
   warmup_ratio: 0.03
   weight_decay: 0.0
-  gradient_checkpointing: true
+  gradient_checkpointing: false
   save_steps: 500            # checkpoint to Drive every N steps (Colab disconnects)
   eval_steps: 200            # validation loss every N steps (for the loss curve)
   val_pairs: 500             # fixed random sample of validation (review, aspect) pairs used for that loss
