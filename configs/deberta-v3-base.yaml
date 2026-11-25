@@ -25,7 +25,7 @@ run:
   mode: finetune             # finetune = full fine-tune of hf_id | zero_shot = NLI model, no training
                              # few_shot = fine-tune the NLI model on k_shot real reviews per class
   condition: C1              # finetune only. C1 real | C2 +noise | C3 +oversampled mixed | C4 +synthetic | C5 +mixed rewrites
-  scale: full                # full = train (20k) | low = train_2k + _1k files | tune = train_10k (C1 only)
+  scale: mid                 # full = train (20k) | mid = 5k of train_10k + 2.5k aug | low = train_2k + _1k files | tune = train_10k (C1 only)
                              # few_shot: the real file the k examples are drawn from
   seed: 42
   k_shot: 16                 # few_shot only: real reviews per class per aspect

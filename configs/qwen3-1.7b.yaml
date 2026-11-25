@@ -29,7 +29,7 @@ train:
 run:
   mode: finetune             # finetune = LoRA training | zero_shot = prompt only | few_shot = examples in the prompt, no training
   condition: C1              # finetune only. C1 real | C2 +noise | C3 +oversampled mixed | C4 +synthetic | C5 +mixed rewrites
-  scale: full                # full = train (20k) | low = train_2k + _1k files | tune = train_10k (C1 only)
+  scale: mid                 # full = train (20k) | mid = 5k of train_10k + 2.5k aug | low = train_2k + _1k files | tune = train_10k (C1 only)
                              # few_shot: the real file the prompt examples are drawn from
   seed: 42
   k_shot: 2                  # few_shot only: examples per class per aspect in the prompt (2 -> 6 examples)
