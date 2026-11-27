@@ -4,6 +4,9 @@ model:
   name: deberta-v3-base
   type: encoder              # encoder = full fine-tuning with a 3-class head, input = (aspect, review)
   hf_id: microsoft/deberta-v3-base
+  # Same 128k DeBERTa-v3 vocabulary, but this repo ships tokenizer.json. microsoft/deberta-v3-base only has
+  # spm.model, whose conversion breaks on Colab (protobuf version clash).
+  tokenizer_id: MoritzLaurer/deberta-v3-large-zeroshot-v2.0
   nli_hf_id: MoritzLaurer/deberta-v3-large-zeroshot-v2.0        # NLI model: used as-is for zero_shot, fine-tuned for few_shot
 
 train:
