@@ -19,7 +19,8 @@ train:
 few_shot:
   lr: 1.0e-5
   epochs: 10
-  batch_size: 16
+  batch_size: 8              # large NLI model: 16 runs out of memory on a T4
+  grad_accum: 2              # effective batch 16
 
 run:
   mode: finetune             # finetune = full fine-tune of hf_id | zero_shot = NLI model, no training
