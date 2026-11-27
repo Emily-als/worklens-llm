@@ -18,7 +18,7 @@ train:
   warmup_ratio: 0.06
   weight_decay: 0.01
 
-# Overrides applied to train for few_shot runs (fine-tuning the NLI model on k examples per class)
+# Overrides applied to train for few_shot runs (fine-tuning the NLI entailment head on k examples per class, as (review, hypothesis) pairs)
 few_shot:
   lr: 1.0e-5
   epochs: 10
