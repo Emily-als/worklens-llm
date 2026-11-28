@@ -1,0 +1,17 @@
+# Shared settings for every training run.
+# Model-specific settings (model, hyperparameters, which run to do) live in configs/<model>.yaml
+# and override anything defined here.
+
+paths:
+  # Folder with train.jsonl, val.jsonl, T1-T4 and the aug_*.jsonl files (dataset v1).
+  # If the folder is shared with you, add a Drive shortcut to it in My Drive so this path exists.
+  data_dir: /content/drive/MyDrive/LLM Project/DATASETS/EXPERIMENTS/v1
+  # One sub-folder per run: config snapshot, final model/adapter, predictions, metrics.csv
+  runs_dir: /content/drive/MyDrive/LLM Project/RUNS
+  # Every finished run appends its scores here
+  results_csv: /content/drive/MyDrive/LLM Project/RUNS/results.csv
+
+eval:
+  # Evaluated after every run. val is used to pick hyperparameters, never the test sets.
+  sets: [val, T1, T2, T2_typo, T2_punct, T3, T4]
+  batch_size: 32

@@ -1,0 +1,43 @@
+person: B                    # written to results.csv
+
+model:
+  name: deberta-v3-base
+  type: encoder              # encoder = full fine-tuning with a 3-class head, input = (aspect, review)
+  hf_id: microsoft/deberta-v3-base
+  # Same 128k DeBERTa-v3 vocabulary, but this repo ships tokenizer.json. microsoft/deberta-v3-base only has
+  # spm.model, whose conversion breaks on Colab (protobuf version clash).
+  tokenizer_id: MoritzLaurer/deberta-v3-large-zeroshot-v2.0
+  nli_hf_id: MoritzLaurer/deberta-v3-large-zeroshot-v2.0        # NLI model: used as-is for zero_shot, fine-tuned for few_shot
+
+train:
+  lr: 2.0e-5                 # write floats with a dot and signed exponent (2.0e-5), YAML reads 2e-5 as text
+  epochs: 3                  # evaluated on val after each epoch, best epoch is kept
+  batch_size: 32
+  grad_accum: 1
+  max_length: 256
+  warmup_ratio: 0.06
+  weight_decay: 0.01
+
+# Overrides applied to train for few_shot runs (fine-tuning the NLI entailment head on k examples per class, as (review, hypothesis) pairs)
+few_shot:
+  lr: 1.0e-5
+  epochs: 10
+  batch_size: 8              # large NLI model: 16 runs out of memory on a T4
+  grad_accum: 2              # effective batch 16
+
+run:
+  mode: finetune             # finetune = full fine-tune of hf_id | zero_shot = NLI model, no training
+                             # few_shot = fine-tune the NLI model on k_shot real reviews per class
+  condition: C1              # finetune only. C1 real | C2 +noise | C3 +oversampled mixed | C4 +synthetic | C5 +mixed rewrites
+  scale: mid                 # full = train (20k) | mid = 5k of train_10k + 2.5k aug | low = train_2k + _1k files | tune = train_10k (C1 only)
+                             # few_shot: the real file the k examples are drawn from
+  seed: 42
+  k_shot: 16                 # few_shot only: real reviews per class per aspect
+
+# Run several configurations in one session. Keys can be any key of run or train.
+# Examples:
+#   sweep: {mode: [zero_shot, few_shot]}       (both baselines)
+#   sweep: {lr: [1.0e-5, 3.0e-5]}              (with scale: tune)
+#   sweep: {condition: [C1, C2, C3, C4, C5]}
+#   sweep: {seed: [42, 43, 44]}
+sweep: {mode: [zero_shot, few_shot, finetune], condition: [C1, C2, C3]}

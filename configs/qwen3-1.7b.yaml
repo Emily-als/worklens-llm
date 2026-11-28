@@ -1,0 +1,43 @@
+person: A                    # written to results.csv
+
+model:
+  name: qwen3-1.7b
+  type: llm                  # llm = LoRA / QLoRA fine-tuning
+  hf_id: Qwen/Qwen3-1.7B
+  quantization: none         # none = fp16 + LoRA, 4bit = QLoRA
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: all-linear
+
+train:
+  lr: 2.0e-4                 # write floats with a dot and signed exponent (2.0e-4), YAML reads 2e-4 as text
+  epochs: 1
+  # T4 settings. On an A100 use batch_size 16, grad_accum 1, gradient_checkpointing false (faster, same effective batch).
+  batch_size: 8
+  grad_accum: 2              # effective batch = batch_size * grad_accum = 16
+  max_length: 512            # tokens; long reviews are clipped to max_length - 128
+  warmup_ratio: 0.03
+  weight_decay: 0.0
+  gradient_checkpointing: true
+  save_steps: 500            # checkpoint to Drive every N steps (Colab disconnects)
+  eval_steps: 200            # validation loss every N steps (for the loss curve)
+  val_pairs: 500             # fixed random sample of validation (review, aspect) pairs used for that loss
+
+run:
+  mode: finetune             # finetune = LoRA training | zero_shot = prompt only | few_shot = examples in the prompt, no training
+  condition: C1              # finetune only. C1 real | C2 +noise | C3 +oversampled mixed | C4 +synthetic | C5 +mixed rewrites
+  scale: mid                 # full = train (20k) | mid = 5k of train_10k + 2.5k aug | low = train_2k + _1k files | tune = train_10k (C1 only)
+                             # few_shot: the real file the prompt examples are drawn from
+  seed: 42
+  k_shot: 2                  # few_shot only: examples per class per aspect in the prompt (2 -> 6 examples)
+
+# Run several configurations in one session. Keys can be any key of run, train or lora.
+# Examples:
+#   sweep: {mode: [zero_shot, few_shot]}       (both prompting baselines)
+#   sweep: {lr: [1.0e-4, 2.0e-4, 5.0e-4]}      (with scale: tune)
+#   sweep: {condition: [C1, C2, C3, C4, C5]}
+#   sweep: {seed: [43, 44]}
+sweep: {mode: [zero_shot, few_shot, finetune], condition: [C1, C2, C3]}
